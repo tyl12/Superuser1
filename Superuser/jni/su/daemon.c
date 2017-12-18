@@ -558,11 +558,11 @@ static void do_init() {
 			return;
 
 		while(access("/system/bin/sh", R_OK)) sleep(1);
-		ret = setexeccon("u:r:su:s0");
+		ret = setexeccon("u:r:phhsu_daemon:s0");
 		execl(path, path, NULL);
 		LOGE("Failed to execute %s. Trying as shell script, ret = %d", path, ret);
 
-		ret = setexeccon("u:r:su:s0");
+		ret = setexeccon("u:r:phhsu_daemon:s0");
 		execl("/system/bin/sh", "/system/bin/sh", path, NULL);
 		LOGE("Failed to execute %s as shell script", path);
 		_exit(1);
@@ -571,7 +571,7 @@ static void do_init() {
 }
 
 static void prepare() {
-	setfscreatecon("u:object_r:su_daemon:s0");
+	setfscreatecon("u:object_r:phhsu_daemon:s0");
 	mkdir("/dev/su", 0700);
 	prepare_su_bind();
 	prepare_binds();

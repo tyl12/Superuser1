@@ -630,7 +630,7 @@ static __attribute__ ((noreturn)) void allow(struct su_context *ctx) {
 	if(ctx->to.context && strcmp(ctx->to.context, "u:r:su_light:s0") == 0) {
 		setexeccon(ctx->to.context);
 	} else {
-		setexeccon("u:r:su:s0");
+		setexeccon("u:r:phhsu_daemon:s0");
     }
 
     ctx->to.argv[--argc] = arg0;
@@ -675,7 +675,7 @@ static void fork_for_samsung(void)
 int main(int argc, char *argv[]) {
     if (argc == 2 && strcmp(argv[1], "--daemon") == 0) {
         //Everything we'll exec will be in su, not su_daemon
-		setexeccon("u:r:su:s0");
+		setexeccon("u:r:phhsu_daemon:s0");
         return run_daemon();
     }
     return su_main(argc, argv);
