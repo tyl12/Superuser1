@@ -38,7 +38,7 @@ char* read_file(const char *fn)
 
     if (fstat(fd, &st)) goto oops;
 
-    data = (char*)malloc(st.st_size + 2);
+    data = malloc(st.st_size + 2);
     if (!data) goto oops;
 
     if (read(fd, data, st.st_size) != st.st_size) goto oops;
@@ -56,11 +56,7 @@ oops:
 int get_property(const char *data, char *found, const char *searchkey, const char *not_found)
 {
     char *key, *value, *eol, *sol, *tmp;
-    if (data == NULL){
-        int len = strlen(not_found);
-        memcpy(found, not_found, len + 1);
-        return len;
-    }
+    if (data == NULL) goto defval;
     int matched = 0;
     sol = strdup(data);
     while((eol = strchr(sol, '\n'))) {

@@ -120,8 +120,8 @@ int send_result(struct su_context *ctx, policy_t policy) {
             get_command(&ctx->to),
             "--es",
             "action",
-            policy == ALLOW ? (char*)"allow" : (char*)"deny",
-            user[0] ? (char*)"--user" : NULL,
+            policy == ALLOW ? "allow" : "deny",
+            user[0] ? "--user" : NULL,
             android_user_id,
             NULL
         };
@@ -151,8 +151,8 @@ int send_result(struct su_context *ctx, policy_t policy) {
         get_command(&ctx->to),
         "--es",
         "action",
-        policy == ALLOW ? (char*)"allow" : (char*)"deny",
-        user[0] ? (char*)"--user" : NULL,
+        policy == ALLOW ? "allow" : "deny",
+        user[0] ? "--user" : NULL,
         user,
         NULL
     };
@@ -193,15 +193,13 @@ int send_request(struct su_context *ctx) {
         }
     }
 
-    char user_str[]="--user";
-
     char *request_command[] = {
         AM_PATH,
         ACTION_REQUEST,
         "--es",
         "socket",
         ctx->sock_path,
-        user[0] ? user_str : NULL,
+        user[0] ? "--user" : NULL,
         user,
         NULL
     };
