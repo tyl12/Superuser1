@@ -604,7 +604,7 @@ static __attribute__ ((noreturn)) void allow(struct su_context *ctx) {
     arg0 = (arg0) ? arg0 + 1 : binary;
     if (ctx->to.login) {
         int s = strlen(arg0) + 2;
-        char *p = malloc(s);
+        char *p = (char*)malloc(s);
 
         if (!p)
             exit(EXIT_FAILURE);

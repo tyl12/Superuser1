@@ -35,13 +35,21 @@
 #include <sys/stat.h>
 #include <sys/sendfile.h>
 #include <stdarg.h>
-#include <sys/types.h>
 #include <pthread.h>
 #include <sched.h>
 #include <termios.h>
 #include <signal.h>
 #include <string.h>
 #include <selinux/selinux.h>
+
+#include <errno.h>
+#include <fcntl.h>
+#include <net/if.h>
+#include <stdio.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 
 #ifdef SUPERUSER_EMBEDDED
 #include <cutils/multiuser.h>
@@ -89,7 +97,10 @@ static int recv_fd(int sockfd) {
     };
 
     if (recvmsg(sockfd, &msg, MSG_WAITALL) != 1) {
-        goto error;
+        {
+            LOGE("unable to read fd");
+            exit(-1);
+        }
     }
 
     // Was a control message actually sent?
@@ -101,7 +112,10 @@ static int recv_fd(int sockfd) {
         // Yes, grab the file descriptor from it.
         break;
     default:
-        goto error;
+        {
+            LOGE("unable to read fd");
+            exit(-1);
+        }
     }
 
     struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
@@ -127,10 +141,11 @@ error:
  * fd may be -1, in which case the dummy data is sent,
  * but no control message with the FD is sent.
  */
+char empty_str[]="";
 static void send_fd(int sockfd, int fd) {
     // Need to send some data in the message, this will do.
     struct iovec iov = {
-        .iov_base = "",
+        .iov_base = empty_str,
         .iov_len  = 1,
     };
 
@@ -145,7 +160,8 @@ static void send_fd(int sockfd, int fd) {
         // Is the file descriptor actually open?
         if (fcntl(fd, F_GETFD) == -1) {
             if (errno != EBADF) {
-                goto error;
+                PLOGE("unable to send fd");
+                exit(-1);
             }
             // It's closed, don't send a control message or sendmsg will EBADF.
         } else {
@@ -194,7 +210,7 @@ static char* read_string(int fd) {
         LOGE("invalid string length %d", len);
         exit(-1);
     }
-    char* val = malloc(sizeof(char) * (len + 1));
+    char* val = (char*)malloc(sizeof(char) * (len + 1));
     if (val == NULL) {
         LOGE("unable to malloc string");
         exit(-1);
@@ -292,7 +308,7 @@ static int daemon_accept(int fd) {
     struct ucred credentials;
     int ucred_length = sizeof(struct ucred);
     /* fill in the user data structure */
-    if(getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &credentials, &ucred_length)) {
+    if(getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &credentials, (socklen_t *)&ucred_length)) {
         LOGE("could obtain credentials from unix domain socket");
         exit(-1);
     }
@@ -598,7 +614,10 @@ int run_daemon() {
     }
     if (fcntl(fd, F_SETFD, FD_CLOEXEC)) {
         PLOGE("fcntl FD_CLOEXEC");
-        goto err;
+        {
+            close(fd);
+            return -1;
+        }
     }
 
     memset(&sun, 0, sizeof(sun));
@@ -621,7 +640,10 @@ int run_daemon() {
 
     if (bind(fd, (struct sockaddr*)&sun, sizeof(sun)) < 0) {
         PLOGE("daemon bind");
-        goto err;
+        {
+            close(fd);
+            return -1;
+        }
     }
 
     chmod(REQUESTOR_DAEMON_PATH, 0755);
@@ -631,7 +653,10 @@ int run_daemon() {
 
     if (listen(fd, 10) < 0) {
         PLOGE("daemon listen");
-        goto err;
+        {
+            close(fd);
+            return -1;
+        }
     }
 
     int client;
