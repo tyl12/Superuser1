@@ -20,14 +20,14 @@
 #define BINDS_PATH "/data/su/binds"
 #define BINDS_TMP_PATH "/data/su/binds.new"
 
-typedef void (*bind_cb)(void *arg, int uid, const char *src, const char *dst);
-extern int bind_foreach(bind_cb cb, void* arg);
+typedef void (*bind_cb)(void *arg, int uid, const char *src, const char *dst, void* reserved);
+extern int bind_foreach(bind_cb cb, void* arg, void* reserved);
 extern int bind_uniq_dst(const char *dst);
 extern int bind_remove(const char *path, int uid);
 extern void bind_ls(int uid);
 
-typedef void (*init_cb)(void *arg, int uid, const char *path);
-extern int init_foreach(init_cb cb, void* arg);
+typedef void (*init_cb)(void *arg, int uid, const char *path, void* reserved);
+extern int init_foreach(init_cb cb, void* arg, void* reserved);
 extern int init_uniq(const char *dst);
 extern int init_remove(const char *path, int uid);
 extern void init_ls(int uid);

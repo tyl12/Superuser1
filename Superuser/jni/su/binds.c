@@ -36,7 +36,7 @@
 #include <arpa/inet.h>
 #include "binds.h"
 
-int bind_foreach(bind_cb cb, void* arg) {
+int bind_foreach(bind_cb cb, void* arg, void* reserved) {
     int res = 0;
     char *str = NULL;
 	int fd = open(BINDS_PATH, O_RDONLY);
@@ -71,7 +71,7 @@ int bind_foreach(bind_cb cb, void* arg) {
         *parse_dst = 0; // Split parse_src string
         parse_dst++;
 
-		cb(arg, uid, parse_src, parse_dst);
+		cb(arg, uid, parse_src, parse_dst, reserved);
 
         base = ptr+1;
     }
@@ -83,31 +83,89 @@ error:
     return res;
 }
 
+struct reserved1{
+    char* _dst;
+    int _res;
+};
+
+static void cb1(void *arg, int uid, const char *src, const char *dst, void* reserved) {
+    struct reserved1* input=(struct reserved1 *)reserved;
+
+    char* _dst=input->_dst;
+    if(strcmp(dst, _dst) == 0)
+        input->_res = 0;
+}
+
 int bind_uniq_dst(const char *dst) {
     static int _res;
     static const char *_dst;
 
 	_res = 1;
     _dst = dst;
-    auto void cb(void *arg, int uid, const char *src, const char *dst) {
-        if(strcmp(dst, _dst) == 0)
-            _res = 0;
-    }
-    if(!bind_foreach(cb, NULL))
+
+    //warp
+    struct reserved1 obj;
+    obj._dst=_dst;
+    obj._res=_res;
+
+    if(!bind_foreach(cb1, NULL, (void*)&obj))
         return 0;
+
+    //dewarp
+    _res = obj._res;
+
     return _res;
 }
 
+struct reserved2{
+    int _uid;
+};
+static void cb2(void *arg, int uid, const char *src, const char *dst, void* reserved) {
+    int _uid = ((struct reserved2*)reserved)->_uid;
+    if(_uid == 0 || _uid == 2000 || _uid == uid) {
+        fprintf(stderr, "%d %s => %s\n", uid, src, dst);
+    }
+}
 void bind_ls(int uid) {
     static int _uid;
 	_uid=uid;
-    auto void cb(void *arg, int uid, const char *src, const char *dst) {
-		if(_uid == 0 || _uid == 2000 || _uid == uid) {
-			fprintf(stderr, "%d %s => %s\n", uid, src, dst);
-		}
-    }
-    bind_foreach(cb, NULL);
+
+    //warp
+    struct reserved2 obj;
+    obj._uid=_uid;
+
+    bind_foreach(cb2, NULL, (void*)&obj);
 }
+
+
+struct reserved3{
+    char* _path;
+    int _uid;
+    int _found;
+    int _fd;
+};
+
+static void cb3(void *arg, int uid, const char *src, const char *dst, void* reserved) {
+    struct reserved3* input = (struct reserved3*)reserved;
+    char* _path = input->_path;
+    int _uid = input->_uid;
+    int _found = input->_found;
+    int _fd = input->_fd;
+
+    //The one we want to drop
+    if(strcmp(dst, _path) == 0 &&
+            (_uid == 0 || _uid == 2000 || _uid == uid)) {
+        _found = 1;
+        //
+        input->_found = _found;
+        return;
+    }
+    char *str = NULL;
+    int len = asprintf(&str, "%d:%s:%s", uid, src, dst);
+    write(_fd, str, len+1); //len doesn't include final \0 and we want to write it
+    free(str);
+}
+
 
 int bind_remove(const char *path, int uid) {
 	static int _found = 0;
@@ -125,26 +183,26 @@ int bind_remove(const char *path, int uid) {
 	if(_fd<0)
 		return 0;
 
-    auto void cb(void *arg, int uid, const char *src, const char *dst) {
-		//The one we want to drop
-        if(strcmp(dst, _path) == 0 &&
-				(_uid == 0 || _uid == 2000 || _uid == uid)) {
-			_found = 1;
-			return;
-		}
-		char *str = NULL;
-		int len = asprintf(&str, "%d:%s:%s", uid, src, dst);
-		write(_fd, str, len+1); //len doesn't include final \0 and we want to write it
-		free(str);
-    }
-    bind_foreach(cb, NULL);
+    //warp
+    struct reserved3 obj;
+    obj._path=_path;
+    obj._uid=_uid;
+    obj._found=_found;
+    obj._fd=_fd;
+
+    bind_foreach(cb3, NULL, (void*)&obj);
+
+    //dewarp
+    _fd=obj._fd;
+    _found=obj._found;
+
 	close(_fd);
 	unlink(BINDS_PATH);
 	rename(BINDS_TMP_PATH, BINDS_PATH);
 	return _found;
 }
 
-int init_foreach(init_cb icb, void* arg) {
+int init_foreach(init_cb icb, void* arg, void* reserved) {
     int res = 0;
     char *str = NULL;
 	int fd = open("/data/su/init", O_RDONLY);
@@ -174,7 +232,7 @@ int init_foreach(init_cb icb, void* arg) {
         parsed++;
 
 
-		icb(arg, uid, parsed);
+		icb(arg, uid, parsed, reserved);
 
         base = ptr+1;
     }
@@ -186,19 +244,69 @@ error:
     return res;
 }
 
+struct reserved5{
+    char* _path;
+    int _res;
+};
+static void cb5(void *arg, int uid, const char *path, void* reserved) {
+    struct reserved5* input = (struct reserved5*) reserved;
+    char* _path = input->_path;
+    int _res=input->_res;
+
+    if(strcmp(path, _path) == 0)
+        _res = 0;
+
+    input->_res = _res;
+}
 int init_uniq(const char *path) {
     static int _res;
     static const char *_path;
 
 	_res = 1;
     _path = path;
-    auto void cb(void *arg, int uid, const char *path) {
-        if(strcmp(path, _path) == 0)
-            _res = 0;
-    }
-    if(!init_foreach(cb, NULL))
+
+    //warp
+    struct reserved5 obj;
+    obj._res=_res;
+    obj._path=_path;
+
+    if(!init_foreach(cb5, NULL, (void*)&obj))
         return 0;
+
+    //dewarp
+    _res = obj._res;
+
     return _res;
+}
+
+
+struct reserved6{
+    char* _path;
+    int _uid;
+    int _found;
+    int fd;
+};
+
+static void cb6(void *arg, int uid, const char *path, void* reserved) {
+    struct reserved6* input = (struct reserved6*)reserved;
+    char* _path=input->_path;
+    int _uid=input->_uid;
+    int _found=input->_found;
+    int fd=input->fd;
+
+
+    //The one we want to drop
+    if(strcmp(path, _path) == 0 &&
+            (_uid == 0 || _uid == 2000 || uid == _uid)) {
+        _found = 1;
+        //
+        input->_found = _found;
+        return;
+    }
+    char *str = NULL;
+    int len = asprintf(&str, "%d:%s", uid, path);
+    write(fd, str, len+1); //len doesn't include final \0 and we want to write it
+    free(str);
 }
 
 int init_remove(const char *path, int uid) {
@@ -216,31 +324,33 @@ int init_remove(const char *path, int uid) {
 	if(fd<0)
 		return 0;
 
-    auto void cb(void *arg, int uid, const char *path) {
-		//The one we want to drop
-        if(strcmp(path, _path) == 0 &&
-				(_uid == 0 || _uid == 2000 || uid == _uid)) {
-			_found = 1;
-			return;
-		}
-		char *str = NULL;
-		int len = asprintf(&str, "%d:%s", uid, path);
-		write(fd, str, len+1); //len doesn't include final \0 and we want to write it
-		free(str);
-    }
-    init_foreach(cb, NULL);
+    //warp
+    struct reserved6 obj;
+    obj._path = _path;
+    obj._found = _found;
+    obj._uid = _uid;
+    obj.fd = fd;
+
+    init_foreach(cb6, NULL, (void*)&obj);
+
+    //dewarp
+    _found = obj._found;
+
 	close(fd);
 	unlink("/data/su/init");
 	rename("/data/su/init.new", "/data/su/init");
 	return _found;
 }
 
+static void cb7(void *arg, int uid, const char *path, void* reserved) {
+    int _uid = *(int*)reserved;
+
+    if(_uid == 2000 || _uid == 0 || _uid == uid)
+        fprintf(stderr, "%d %s\n", uid, path);
+}
+
 void init_ls(int uid) {
 	static int _uid;
 	_uid = uid;
-    auto void cb(void *arg, int uid, const char *path) {
-		if(_uid == 2000 || _uid == 0 || _uid == uid)
-			fprintf(stderr, "%d %s\n", uid, path);
-    }
-    init_foreach(cb, NULL);
+    init_foreach(cb7, NULL, (void*)&_uid);
 }

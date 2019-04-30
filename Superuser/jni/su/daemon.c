@@ -504,12 +504,16 @@ static void prepare_su_bind() {
 }
 
 
-static void cb(void *arg, int uid, const char *src, const char *dst) {
-	static int i = 0;
+static void cb(void *arg, int uid, const char *src, const char *dst, void* reserved) {
+        int i=*(int*)reserved;
 		int ret = 0;
 
 		char *tmpfile = NULL;
 		asprintf(&tmpfile, "/dev/su/bind%d", i++);
+
+        //
+        *(int*)reserved=i;
+
 		struct stat stbuf;
 		ret = stat(src, &stbuf);
 		if(ret) {
@@ -544,10 +548,11 @@ static void cb(void *arg, int uid, const char *src, const char *dst) {
 			return;
 		}
 }
-
 static void prepare_binds() {
+	static int i = 0;
+
 	mkdir("/data/su", 0700);
-	bind_foreach(cb, NULL);
+	bind_foreach(cb, NULL, (void*)&i);
 }
 static void cb2(void *arg, int uid, const char *path) {
 		int ret = 0;
@@ -568,7 +573,7 @@ static void cb2(void *arg, int uid, const char *path) {
 	}
 
 static void do_init() {
-	init_foreach(cb2, NULL);
+	init_foreach(cb2, NULL, NULL);
 }
 
 static void prepare() {
