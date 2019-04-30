@@ -503,11 +503,9 @@ static void prepare_su_bind() {
 	}
 }
 
-static void prepare_binds() {
-	mkdir("/data/su", 0700);
-	static int i = 0;
 
-	auto void cb(void *arg, int uid, const char *src, const char *dst) {
+static void cb(void *arg, int uid, const char *src, const char *dst) {
+	static int i = 0;
 		int ret = 0;
 
 		char *tmpfile = NULL;
@@ -545,12 +543,13 @@ static void prepare_binds() {
 			LOGE("Failed to mount bind");
 			return;
 		}
-	}
-	bind_foreach(cb, NULL);
 }
 
-static void do_init() {
-	auto void cb(void *arg, int uid, const char *path) {
+static void prepare_binds() {
+	mkdir("/data/su", 0700);
+	bind_foreach(cb, NULL);
+}
+static void cb2(void *arg, int uid, const char *path) {
 		int ret = 0;
 
 		int p = fork();
@@ -567,7 +566,9 @@ static void do_init() {
 		LOGE("Failed to execute %s as shell script", path);
 		_exit(1);
 	}
-	init_foreach(cb, NULL);
+
+static void do_init() {
+	init_foreach(cb2, NULL);
 }
 
 static void prepare() {
