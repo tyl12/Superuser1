@@ -46,7 +46,7 @@ int bind_foreach(bind_cb cb, void* arg) {
 	off_t size = lseek(fd, 0, SEEK_END);
 	lseek(fd, 0, SEEK_SET);
 
-    str = (char*)malloc(size);
+    str = malloc(size);
     if(read(fd, str, size) != size)
         goto error;
 
@@ -55,7 +55,7 @@ int bind_foreach(bind_cb cb, void* arg) {
         char *parse_src, *parse_dst;
         int uid;
 
-        char *ptr = (char*)memchr(base, 0, size-(base-str));
+        char *ptr = memchr(base, 0, size-(base-str));
         if(ptr == NULL)
             goto error;
         sscanf(base, "%d", &uid);

@@ -14,11 +14,11 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_STATIC_LIBRARIES := libc libcutils libselinux
 LOCAL_C_INCLUDES := jni/libselinux/include/ jni/libsepol/include/ jni/sqlite3/
 LOCAL_C_INCLUDES += libselinux/include/ libsepol/include/ sqlite3/
-LOCAL_SRC_FILES := su/su.cpp su/daemon.cpp su/activity.cpp su/db.cpp su/utils.cpp su/pts.cpp sqlite3/sqlite3.c su/hacks.cpp su/binds.cpp
-LOCAL_CPPFLAGS := -DSQLITE_OMIT_LOAD_EXTENSION -std=c++11
+LOCAL_SRC_FILES := su/su.c su/daemon.c su/activity.c su/db.c su/utils.c su/pts.c sqlite3/sqlite3.c su/hacks.c su/binds.c
+LOCAL_CFLAGS := -DSQLITE_OMIT_LOAD_EXTENSION -std=gnu11
 #LOCAL_CFLAGS := -DSQLITE_OMIT_LOAD_EXTENSION -std=c17  -fnested-functions
 
-LOCAL_CPPFLAGS += -DREQUESTOR=\"$(shell cat packageName)\"
+LOCAL_CFLAGS += -DREQUESTOR=\"$(shell cat packageName)\"
 
 ifdef SUPERUSER_EMBEDDED
   LOCAL_CFLAGS += -DSUPERUSER_EMBEDDED
