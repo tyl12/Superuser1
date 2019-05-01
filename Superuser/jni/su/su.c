@@ -79,13 +79,13 @@ int fork_zero_fucks() {
     int pid = fork();
     if (pid) {
         int status;
-        waitpid(pid, &status, 0);
-        return pid;
+        waitpid(pid, &status, 0);//##parent wait child, AA
+        return pid; //continue to execute branch S1
     }
-    else {
+    else {//##child
         if ( (pid = fork()) != 0)
-            exit(0);
-        return 0;
+            exit(0);//child->parent, exit to parent, AA
+        return 0;//child->child, return and continue to execute branch S2
     }
 }
 
@@ -223,18 +223,18 @@ static int get_multiuser_mode() {
     int ret = MULTIUSER_MODE_OWNER_ONLY;
     char mode[12];
     FILE *fp;
-    if ((fp = fopen(REQUESTOR_MULTIUSER_MODE, "r"))) {
+    if ((fp = fopen(REQUESTOR_MULTIUSER_MODE, "r"))) {//## /data/data/<packagename>/files/multiuser_mode
         fgets(mode, sizeof(mode), fp);
         int last = strlen(mode) - 1;
         if (mode[last] == '\n')
             mode[last] = '\0';
-        if (strcmp(mode, MULTIUSER_VALUE_USER) == 0) {
+        if (strcmp(mode, MULTIUSER_VALUE_USER) == 0) {//##user
             ret = MULTIUSER_MODE_USER;
-        } else if (strcmp(mode, MULTIUSER_VALUE_OWNER_MANAGED) == 0) {
+        } else if (strcmp(mode, MULTIUSER_VALUE_OWNER_MANAGED) == 0) {//##managed
             ret = MULTIUSER_MODE_OWNER_MANAGED;
         }
         else {
-            ret = MULTIUSER_MODE_OWNER_ONLY;
+            ret = MULTIUSER_MODE_OWNER_ONLY;//owner
         }
         fclose(fp);
     }
@@ -249,8 +249,8 @@ static void user_init(struct su_context *ctx) {
     if (ctx->from.uid > 99999) {
         ctx->user.android_user_id = ctx->from.uid / 100000;
         if (ctx->user.multiuser_mode == MULTIUSER_MODE_USER) {
-            snprintf(ctx->user.database_path, PATH_MAX, "%s/%d/%s", REQUESTOR_USER_PATH, ctx->user.android_user_id, REQUESTOR_DATABASE_PATH);
-            snprintf(ctx->user.base_path, PATH_MAX, "%s/%d/%s", REQUESTOR_USER_PATH, ctx->user.android_user_id, REQUESTOR);
+            snprintf(ctx->user.database_path, PATH_MAX, "%s/%d/%s", REQUESTOR_USER_PATH, ctx->user.android_user_id, REQUESTOR_DATABASE_PATH); //##@@##
+            snprintf(ctx->user.base_path, PATH_MAX, "%s/%d/%s", REQUESTOR_USER_PATH, ctx->user.android_user_id, REQUESTOR); //##@@## is used to check apk installed.
         }
     }
 }
@@ -548,7 +548,7 @@ static __attribute__ ((noreturn)) void deny(struct su_context *ctx) {
         send_to_app = 0;
 
     if (send_to_app)
-        send_result(ctx, DENY);
+        send_result(ctx, DENY); //## notify apk via am cmd
 
     LOGW("request rejected (%u->%u %s)", ctx->from.uid, ctx->to.uid, cmd);
     fprintf(stderr, "%s\n", strerror(EACCES));
@@ -627,10 +627,10 @@ static __attribute__ ((noreturn)) void allow(struct su_context *ctx) {
             arg0, PARG(0), PARG(1), PARG(2), PARG(3), PARG(4), PARG(5),
             (ctx->to.optind + 6 < ctx->to.argc) ? " ..." : "");
 
-	if(ctx->to.context && strcmp(ctx->to.context, "u:r:su_light:s0") == 0) {
+	if(ctx->to.context && strcmp(ctx->to.context, "u:r:xmsu_light:s0") == 0) {
 		setexeccon(ctx->to.context);
 	} else {
-		setexeccon("u:r:su:s0");
+		setexeccon("u:r:xmsu:s0");
     }
 
     ctx->to.argv[--argc] = arg0;
@@ -675,7 +675,7 @@ static void fork_for_samsung(void)
 int main(int argc, char *argv[]) {
     if (argc == 2 && strcmp(argv[1], "--daemon") == 0) {
         //Everything we'll exec will be in su, not su_daemon
-		setexeccon("u:r:su:s0");
+		setexeccon("u:r:xmsu:s0");
         return run_daemon();
     }
     return su_main(argc, argv);
@@ -688,8 +688,8 @@ int su_main(int argc, char *argv[]) {
 			get_api_version() >= 19) {
 		// attempt to connect to daemon...
 		LOGD("starting daemon client %d %d", getuid(), geteuid());
-		return connect_daemon(argc, argv, ppid);
-	} else {
+		return connect_daemon(argc, argv, ppid);//## for high sdk, we could only handle su via remote socket daemon.
+	} else {//## for root user, and low api, we could handle su directly.
 		return su_main_nodaemon(argc, argv);
 	}
 
@@ -774,7 +774,7 @@ int su_main_nodaemon(int argc, char **argv) {
         .user = {
             .android_user_id = 0,
             .multiuser_mode = MULTIUSER_MODE_OWNER_ONLY,
-            .database_path = REQUESTOR_DATA_PATH REQUESTOR_DATABASE_PATH,
+            .database_path = REQUESTOR_DATA_PATH REQUESTOR_DATABASE_PATH, //##@@
             .base_path = REQUESTOR_DATA_PATH REQUESTOR
         },
         .bind = {
@@ -905,7 +905,7 @@ int su_main_nodaemon(int argc, char **argv) {
     }
 
     read_options(&ctx);
-    user_init(&ctx);
+    user_init(&ctx); //##
 
     // the latter two are necessary for stock ROMs like note 2 which do dumb things with su, or crash otherwise
     if (ctx.from.uid == AID_ROOT) {
@@ -914,7 +914,7 @@ int su_main_nodaemon(int argc, char **argv) {
     }
 
     // verify superuser is installed
-    if (stat(ctx.user.base_path, &st) < 0) {
+    if (stat(ctx.user.base_path, &st) < 0) { //##@@## check apk installed
         // send to market (disabled, because people are and think this is hijacking their su)
         // if (0 == strcmp(JAVA_PACKAGE_NAME, REQUESTOR))
         //     silent_run("am start -d http://www.clockworkmod.com/superuser/install.html -a android.intent.action.VIEW");
@@ -931,12 +931,12 @@ int su_main_nodaemon(int argc, char **argv) {
 
     // always allow if this is the superuser uid
     // superuser needs to be able to reenable itself when disabled...
-    if (ctx.from.uid == st.st_uid) {
+    if (ctx.from.uid == st.st_uid) { //## request from superuser apk itself
         allow(&ctx);
     }
 
     // autogrant shell at this point
-    if (ctx.from.uid == AID_SHELL) {
+    if (ctx.from.uid == AID_SHELL) { //## from shell
         LOGD("Allowing shell.");
         allow(&ctx);
     }
@@ -968,7 +968,7 @@ int su_main_nodaemon(int argc, char **argv) {
     }
 
     //TODO: Ignore database check for init and bind?
-    dballow = database_check(&ctx);
+    dballow = database_check(&ctx);//## check database directly
     switch (dballow) {
         case INTERACTIVE:
             break;

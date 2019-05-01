@@ -51,7 +51,7 @@ int silent_run(char* const args[]) {
     int null = open("/dev/null", O_WRONLY | O_CLOEXEC);
     dup2(null, 1);
     dup2(null, 2);
-    setenv("CLASSPATH", "/system/framework/am.jar", 1);
+    setenv("CLASSPATH", "/system/framework/am.jar", 1); //##@@##
     execv(args[0], args);
     PLOGE("exec am");
     _exit(EXIT_FAILURE);

@@ -275,7 +275,7 @@ static int run_daemon_child(int infd, int outfd, int errfd, int argc, char** arg
     close(outfd);
     close(errfd);
 
-    return su_main_nodaemon(argc, argv);
+    return su_main_nodaemon(argc, argv);//##??
 }
 
 static int daemon_accept(int fd) {
@@ -287,7 +287,7 @@ static int daemon_accept(int fd) {
     daemon_from_uid = read_int(fd);
     LOGD("remote uid: %d", daemon_from_uid);
     daemon_from_pid = read_int(fd);
-    LOGD("remote req pid: %d", daemon_from_pid);
+    LOGD("remote req pid: %d", daemon_from_pid);//## int(remote pid), int(strlen) str, int(remote uid), int(remote req pid)
 
     struct ucred credentials;
     int ucred_length = sizeof(struct ucred);
@@ -355,7 +355,7 @@ static int daemon_accept(int fd) {
 
         // Pass the return code back to the client
         LOGD("sending code");
-        if (write(fd, &code, sizeof(int)) != sizeof(int)) {
+        if (write(fd, &code, sizeof(int)) != sizeof(int)) { //## the socket server wait for the child process's exit status and write the code to client
             PLOGE("unable to write exit code");
         }
 
@@ -476,28 +476,28 @@ static void prepare_su_bind() {
 	int ret = 0;
 
 	//Check if there is a use to mount bind
-	if(access("/system/xbin/su", R_OK) != 0 || access("/system/bin/su", R_OK) != 0)
+	if(access("/system/xbin/xmsu", R_OK) != 0 || access("/system/bin/xmsu", R_OK) != 0)
 		return;
 
-	ret = copy_file("/sbin/su", "/dev/su/su", 0755);
+	ret = copy_file("/sbin/xmsu", "/dev/xmsu/xmsu", 0755);//##?? how to get /sbin/xmsu?
 	if(ret) {
 		PLOGE("Failed to copy su");
 		return;
 	}
-	chmod("/dev/su/su", 0755);
+	chmod("/dev/xmsu/xmsu", 0755);
 
-	ret = setfilecon("/dev/su/su", "u:object_r:system_file:s0");
+	ret = setfilecon("/dev/xmsu/xmsu", "u:object_r:system_file:s0");
 	if(ret) {
 		LOGE("Failed to set file context");
 		return;
 	}
 
-	ret = mount("/dev/su/su", "/system/xbin/su", "", MS_BIND, NULL);
+	ret = mount("/dev/xmsu/xmsu", "/system/xbin/xmsu", "", MS_BIND, NULL);//##??
 	if(ret) {
 		LOGE("Failed to mount bind");
 	}
 
-	ret = mount("/dev/su/su", "/system/bin/su", "", MS_BIND, NULL);
+	ret = mount("/dev/xmsu/xmsu", "/system/bin/xmsu", "", MS_BIND, NULL);
 	if(ret) {
 		LOGE("Failed to mount bind");
 	}
@@ -509,7 +509,7 @@ static void cb(void *arg, int uid, const char *src, const char *dst, void* reser
 		int ret = 0;
 
 		char *tmpfile = NULL;
-		asprintf(&tmpfile, "/dev/su/bind%d", i++);
+		asprintf(&tmpfile, "/dev/xmsu/bind%d", i++); //##
 
         //
         *(int*)reserved=i;
@@ -551,34 +551,34 @@ static void cb(void *arg, int uid, const char *src, const char *dst, void* reser
 static void prepare_binds() {
 	static int i = 0;
 
-	mkdir("/data/su", 0700);
-	bind_foreach(cb, NULL, (void*)&i);
+	mkdir("/data/xmsu", 0700);//##
+	bind_foreach(cb, NULL, (void*)&i); //##why?
 }
-static void cb2(void *arg, int uid, const char *path) {
-		int ret = 0;
+static void cb2(void *arg, int uid, const char *path, void* reserved) {
+    int ret = 0;
 
-		int p = fork();
-		if(p)
-			return;
+    int p = fork();
+    if(p)
+        return; //## parent return
 
-		while(access("/system/bin/sh", R_OK)) sleep(1);
-		ret = setexeccon("u:r:su:s0");
-		execl(path, path, NULL);
-		LOGE("Failed to execute %s. Trying as shell script, ret = %d", path, ret);
+    while(access("/system/bin/sh", R_OK)) sleep(1); //## child process, run a script which is passed by /data/xmsu/init
+    ret = setexeccon("u:r:xmsu:s0");
+    execl(path, path, NULL);
+    LOGE("Failed to execute %s. Trying as shell script, ret = %d", path, ret);
 
-		ret = setexeccon("u:r:su:s0");
-		execl("/system/bin/sh", "/system/bin/sh", path, NULL);
-		LOGE("Failed to execute %s as shell script", path);
-		_exit(1);
-	}
+    ret = setexeccon("u:r:xmsu:s0");
+    execl("/system/bin/sh", "/system/bin/sh", path, NULL);
+    LOGE("Failed to execute %s as shell script", path);
+    _exit(1);
+}
 
 static void do_init() {
 	init_foreach(cb2, NULL, NULL);
 }
 
 static void prepare() {
-	setfscreatecon("u:object_r:su_daemon:s0");
-	mkdir("/dev/su", 0700);
+	setfscreatecon("u:object_r:xmsu_daemon:s0");
+	mkdir("/dev/xmsu", 0700);
 	prepare_su_bind();
 	prepare_binds();
 	do_init();
@@ -591,7 +591,7 @@ int run_daemon() {
         return -1;
     }
 
-	prepare();
+	prepare();//## will read /data/xmsu/init and execute in a child process as initialization
 
     int fd;
     struct sockaddr_un sun;
@@ -608,7 +608,7 @@ int run_daemon() {
 
     memset(&sun, 0, sizeof(sun));
     sun.sun_family = AF_LOCAL;
-    sprintf(sun.sun_path, "%s/server", REQUESTOR_DAEMON_PATH);
+    sprintf(sun.sun_path, "%s/server", REQUESTOR_DAEMON_PATH); // ## /dev/<packagename>.daemon/server
 
     /*
      * Delete the socket to protect from situations when
@@ -619,18 +619,20 @@ int run_daemon() {
     unlink(REQUESTOR_DAEMON_PATH);
 
     int previous_umask = umask(027);
-    mkdir(REQUESTOR_DAEMON_PATH, 0777);
+    mkdir(REQUESTOR_DAEMON_PATH, 0777); //## create dir /dev/<packagename>.daemon
 
     memset(sun.sun_path, 0, sizeof(sun.sun_path));
-    memcpy(sun.sun_path, "\0" "SUPERUSER", strlen("SUPERUSER") + 1);
+    memcpy(sun.sun_path, "\0" "SUPERUSER", strlen("SUPERUSER") + 1); //##"\0SUPERUSER\0"
 
-    if (bind(fd, (struct sockaddr*)&sun, sizeof(sun)) < 0) {
+    PLOGE("##%s: sun.sun_path=%s\n", __FUNCTION__, sun.sun_path);
+
+    if (bind(fd, (struct sockaddr*)&sun, sizeof(sun)) < 0) { //##?? bind on what path?
         PLOGE("daemon bind");
         goto err;
     }
 
     chmod(REQUESTOR_DAEMON_PATH, 0755);
-    chmod(sun.sun_path, 0777);
+    chmod(sun.sun_path, 0777); //##??
 
     umask(previous_umask);
 
@@ -640,12 +642,12 @@ int run_daemon() {
     }
 
     int client;
-    while ((client = accept(fd, NULL, NULL)) > 0) {
-        if (fork_zero_fucks() == 0) {
-            close(fd);
-            return daemon_accept(client);
+    while ((client = accept(fd, NULL, NULL)) > 0) {//## accept client connect while idle
+        if (fork_zero_fucks() == 0) { //child->child process continue to execute S2
+            close(fd); //child not listen socket
+            return daemon_accept(client); //handle this client
         }
-        else {
+        else {//parent, S1, continue to handle next client
             close(client);
         }
     }
@@ -730,7 +732,7 @@ int connect_daemon(int argc, char *argv[], int ppid) {
 
     memset(&sun, 0, sizeof(sun));
     sun.sun_family = AF_LOCAL;
-    sprintf(sun.sun_path, "%s/server", REQUESTOR_DAEMON_PATH);
+    sprintf(sun.sun_path, "%s/server", REQUESTOR_DAEMON_PATH);//##?? why need this??
 
     memset(sun.sun_path, 0, sizeof(sun.sun_path));
     memcpy(sun.sun_path, "\0" "SUPERUSER", strlen("SUPERUSER") + 1);
@@ -749,7 +751,7 @@ int connect_daemon(int argc, char *argv[], int ppid) {
 
     // Send TTYs directly (instead of proxying with a PTY) if
     // the SUPERUSER_SEND_TTY environment variable is set.
-    if (getenv("SUPERUSER_SEND_TTY") == NULL) {
+    if (getenv("SUPERUSER_SEND_TTY") == NULL) { //##@@##
         if (isatty(STDIN_FILENO))  atty |= ATTY_IN;
         if (isatty(STDOUT_FILENO)) atty |= ATTY_OUT;
         if (isatty(STDERR_FILENO)) atty |= ATTY_ERR;

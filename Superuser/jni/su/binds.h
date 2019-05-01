@@ -17,8 +17,8 @@
 #ifndef BINDS_H
 #define BINDS_H
 
-#define BINDS_PATH "/data/su/binds"
-#define BINDS_TMP_PATH "/data/su/binds.new"
+#define BINDS_PATH "/data/xmsu/binds"   //##
+#define BINDS_TMP_PATH "/data/xmsu/binds.new"
 
 typedef void (*bind_cb)(void *arg, int uid, const char *src, const char *dst, void* reserved);
 extern int bind_foreach(bind_cb cb, void* arg, void* reserved);

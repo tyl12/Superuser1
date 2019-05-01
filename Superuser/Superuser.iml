@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
+<module external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android" name="Android">
       <configuration />
@@ -17,4 +17,3 @@
     <orderEntry type="module" module-name="Widgets" />
   </component>
 </module>
-

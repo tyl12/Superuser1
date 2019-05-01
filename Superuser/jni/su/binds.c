@@ -35,11 +35,12 @@
 #include <selinux/selinux.h>
 #include <arpa/inet.h>
 #include "binds.h"
+#include "su.h"
 
 int bind_foreach(bind_cb cb, void* arg, void* reserved) {
     int res = 0;
     char *str = NULL;
-	int fd = open(BINDS_PATH, O_RDONLY);
+	int fd = open(BINDS_PATH, O_RDONLY); //## /data/xmsu/binds
     if(fd<0)
         return 1;
 
@@ -202,10 +203,10 @@ int bind_remove(const char *path, int uid) {
 	return _found;
 }
 
-int init_foreach(init_cb icb, void* arg, void* reserved) {
+int init_foreach(init_cb icb, void* arg, void* reserved) {//## run a script which is passed by /data/xmsu/init
     int res = 0;
     char *str = NULL;
-	int fd = open("/data/su/init", O_RDONLY);
+	int fd = open("/data/xmsu/init", O_RDONLY); //##@@
     if(fd<0)
         return 1;
 
@@ -221,7 +222,7 @@ int init_foreach(init_cb icb, void* arg, void* reserved) {
         char *parsed;
         int uid;
 
-        char *ptr = memchr(base, 0, size-(base-str));
+        char *ptr = memchr(base, 0, size-(base-str)); //## "uid:script_file_path\0uid:script_file_path\0....."
         if(ptr == NULL)
             goto error;
         sscanf(base, "%d", &uid);
@@ -232,6 +233,7 @@ int init_foreach(init_cb icb, void* arg, void* reserved) {
         parsed++;
 
 
+        PLOGE("## %s: /data/xmsu/init: uid=%d, parsed=%s\n",__FUNCTION__, uid, parsed);
 		icb(arg, uid, parsed, reserved);
 
         base = ptr+1;

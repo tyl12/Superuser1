@@ -68,7 +68,7 @@
 // there's no guarantee that the db or files are actually created named as such by
 // SQLiteOpenHelper, etc. Though that is the behavior as of current.
 // it is up to the Android application to symlink as appropriate.
-#define REQUESTOR_DATABASE_PATH REQUESTOR "/databases/su.sqlite"
+#define REQUESTOR_DATABASE_PATH REQUESTOR "/databases/su.sqlite" //##@@##??
 #define REQUESTOR_MULTIUSER_MODE REQUESTOR_FILES_PATH "/multiuser_mode"
 
 #define DEFAULT_SHELL "/system/bin/sh"
