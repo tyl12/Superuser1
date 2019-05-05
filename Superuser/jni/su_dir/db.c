@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
-#include <sqlite3.h>
 #include <time.h>
 
+#include "sqlite3.h"
 #include "su.h"
 
 struct callback_data_t {

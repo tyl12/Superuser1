@@ -10,17 +10,37 @@ APP_ALLOW_MISSING_DEPS = true
 LOCAL_MODULE := su
 LOCAL_MODULE_TAGS := eng debug optional
 LOCAL_LDFLAGS := -static
+
 LOCAL_FORCE_STATIC_EXECUTABLE := true
+
+ifdef FORCE_LOCAL_NDK_BUILD
+$(info ## FORCE_LOCAL_NDK_BUILD)
+
 LOCAL_STATIC_LIBRARIES := libc libcutils libselinux
+
 LOCAL_C_INCLUDES := jni/libselinux/include/ jni/libsepol/include/ jni/sqlite3/
 LOCAL_C_INCLUDES += libselinux/include/ libsepol/include/ sqlite3/
-LOCAL_SRC_FILES := su/su.c su/daemon.c su/activity.c su/db.c su/utils.c su/pts.c sqlite3/sqlite3.c su/hacks.c su/binds.c
+
+else
+$(info ## AOSP_BUILD)
+
+LOCAL_STATIC_LIBRARIES += libc libcutils libselinux libsepol
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/sqlite3/
+endif
+
+LOCAL_SRC_FILES := su_dir/su.c su_dir/daemon.c su_dir/activity.c su_dir/db.c su_dir/utils.c su_dir/pts.c sqlite3/sqlite3.c su_dir/hacks.c su_dir/binds.c
 LOCAL_CFLAGS := -DSQLITE_OMIT_LOAD_EXTENSION -std=gnu11
-#LOCAL_CFLAGS := -DSQLITE_OMIT_LOAD_EXTENSION -std=c17  -fnested-functions
 
-LOCAL_CFLAGS += -DREQUESTOR=\"$(shell cat packageName)\"
+#LOCAL_CFLAGS += -DREQUESTOR=\"$(shell cat $(LOCAL_PATH)/../packageName)\"
+SPECIFIED_PKG_NAME=$(shell cat $(LOCAL_PATH)/../packageName)
+LOCAL_CFLAGS += -DREQUESTOR=\"$(SPECIFIED_PKG_NAME)\"
 
-$(info ##$(LOCAL_CFLAGS))
+ifeq ($(strip $(SPECIFIED_PKG_NAME)),)
+$(error ## SPECIFIED_PKG_NAME is empty!)
+else
+$(info ## SPECIFIED_PKG_NAME=$(SPECIFIED_PKG_NAME))
+endif
+
 
 ifdef SUPERUSER_EMBEDDED
   LOCAL_CFLAGS += -DSUPERUSER_EMBEDDED
@@ -63,5 +83,7 @@ ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
 
 endif
 
+ifdef FORCE_LOCAL_NDK_BUILD
 include $(my_path)/libselinux/Android.mk
 include $(my_path)/libsepol/Android.mk
+endif

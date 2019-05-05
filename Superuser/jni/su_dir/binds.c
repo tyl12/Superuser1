@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 #include <strings.h>
 #include <stdint.h>
 #include <pwd.h>
