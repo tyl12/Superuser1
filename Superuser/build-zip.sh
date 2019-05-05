@@ -8,7 +8,8 @@ pushd "$tmpdir"
 mkdir -p META-INF/com/google/android
 cp "$ORIG"/assets/update-binary META-INF/com/google/android/update-binary
 cp "$ORIG"/assets/install-recovery.sh .
-cp -R "$ORIG"/libs/{x86,mips,armeabi} .
+#cp -R "$ORIG"/libs/{x86,mips,armeabi} .
+cp -R "$ORIG"/libs/{arm64-v8a} .
 
 zip -r "$ORIG"/update-su.zip *
 popd
