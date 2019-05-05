@@ -554,7 +554,7 @@ static void prepare_binds() {
 	mkdir("/data/su", 0700);
 	bind_foreach(cb, NULL, (void*)&i);
 }
-static void cb2(void *arg, int uid, const char *path) {
+static void cb2(void *arg, int uid, const char *path, void* reserved) {
 		int ret = 0;
 
 		int p = fork();
