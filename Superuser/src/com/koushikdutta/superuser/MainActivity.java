@@ -53,18 +53,19 @@ public class MainActivity extends BetterListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater mi = new MenuInflater(this);
         mi.inflate(R.menu.app, menu);
-        MenuItem about = menu.findItem(R.id.about);
-        about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(getString(R.string.about))
-                .replace(getListContainerId(), new AboutFragment(), "content")
-                .commit();
-                return true;
-            }
-        });
+
+//        MenuItem about = menu.findItem(R.id.about);
+//        about.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                getFragmentManager()
+//                .beginTransaction()
+//                .addToBackStack(getString(R.string.about))
+//                .replace(getListContainerId(), new AboutFragment(), "content")
+//                .commit();
+//                return true;
+//            }
+//        });
 
         MenuItem settings = menu.findItem(R.id.settings);
         settings.setOnMenuItemClickListener(new OnMenuItemClickListener() {

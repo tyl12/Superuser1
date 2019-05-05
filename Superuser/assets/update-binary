@@ -15,7 +15,7 @@ if echo "$ARCH" | grep -q 86; then
 elif [ "$ARCH" = "mips" -o "$ARCH" = "mips64" ]; then
   PLATFORM=mips
 else
-  PLATFORM=armeabi
+  PLATFORM=arm64-v8a
 fi
 
 cd /tmp

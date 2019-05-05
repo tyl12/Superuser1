@@ -17,5 +17,5 @@ LOCAL_PATH := $(call my-dir)
 my_path_tmp:=$(LOCAL_PATH)
 include $(CLEAR_VARS)
 
-include $(my_path_tmp)/Superuser/Android.mk
+#include $(my_path_tmp)/Superuser/Android.mk
 include $(my_path_tmp)/Superuser/jni/Android.mk
