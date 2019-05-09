@@ -2,6 +2,7 @@
 #clone source code:
 #git clone https://github.com/tyl12/Superuser_phhusson.git
 #cd Superuser_phhusson/
+#git checkout origin/master_aosp_build
 #git clone https://github.com/tyl12/Widgets.git
 
 #build apk with gradle.
