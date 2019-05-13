@@ -47,46 +47,48 @@ ifdef SUPERUSER_EMBEDDED
 endif
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
+#LOCAL_MODULE_PATH := $(PRODUCT_OUT)/data/bin
+$(shell mkdir -p $(PRODUCT_OUT)/data/bin)
 include $(BUILD_EXECUTABLE)
 
 ###################################################################################
 #only change binary name su->xmsu
 include $(LOCAL_PATH)/Mdroid.mk
 ###################################################################################
-
-SYMLINKS := $(addprefix $(TARGET_OUT)/bin/,su)
-$(SYMLINKS):
-	@echo "Symlink: $@ -> /system/xbin/su"
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) ln -sf ../xbin/su $@
-
-ALL_DEFAULT_INSTALLED_MODULES += $(SYMLINKS)
-
-# We need this so that the installed files could be picked up based on the
-# local module name
-ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
-    $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(SYMLINKS)
-
-ifdef SUPERUSER_EMBEDDED
-
-# make sure init.superuser.rc is imported from
-# init.rc or similar
-
-SUPERUSER_RC := $(TARGET_ROOT_OUT)/init.superuser.rc
-$(SUPERUSER_RC): $(LOCAL_PATH)/init.superuser.rc | $(ACP)
-	$(copy-file-to-new-target)
-
-SUPERUSER_MARKER := $(TARGET_OUT_ETC)/.has_su_daemon
-$(SUPERUSER_MARKER): $(LOCAL_INSTALLED_MODULE)
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	$(hide) touch $@
-
-ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
-    $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(SUPERUSER_RC) $(SUPERUSER_MARKER)
-
-endif
+## tony: not create link. init script is already added in init.<>.rc
+#  SYMLINKS := $(addprefix $(TARGET_OUT)/bin/,su)
+#  $(SYMLINKS):
+#  	@echo "Symlink: $@ -> /system/xbin/su"
+#  	@mkdir -p $(dir $@)
+#  	@rm -rf $@
+#  	$(hide) ln -sf ../xbin/su $@
+#  
+#  ALL_DEFAULT_INSTALLED_MODULES += $(SYMLINKS)
+#  
+#  # We need this so that the installed files could be picked up based on the
+#  # local module name
+#  ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
+#      $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(SYMLINKS)
+#  
+#  ifdef SUPERUSER_EMBEDDED
+#  
+#  # make sure init.superuser.rc is imported from
+#  # init.rc or similar
+#  
+#  SUPERUSER_RC := $(TARGET_ROOT_OUT)/init.superuser.rc
+#  $(SUPERUSER_RC): $(LOCAL_PATH)/init.superuser.rc | $(ACP)
+#  	$(copy-file-to-new-target)
+#  
+#  SUPERUSER_MARKER := $(TARGET_OUT_ETC)/.has_su_daemon
+#  $(SUPERUSER_MARKER): $(LOCAL_INSTALLED_MODULE)
+#  	@mkdir -p $(dir $@)
+#  	@rm -rf $@
+#  	$(hide) touch $@
+#  
+#  ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
+#      $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(SUPERUSER_RC) $(SUPERUSER_MARKER)
+#  
+#  endif
 
 ifdef FORCE_LOCAL_NDK_BUILD
 include $(my_path)/libselinux/Android.mk

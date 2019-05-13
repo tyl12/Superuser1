@@ -45,6 +45,8 @@ ifdef SUPERUSER_EMBEDDED
 endif
 
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
+#LOCAL_MODULE_PATH := $(PRODUCT_OUT)/data/bin
+$(shell mkdir -p $(PRODUCT_OUT)/data/bin)
 include $(BUILD_EXECUTABLE)
 
 ###################################################################################
