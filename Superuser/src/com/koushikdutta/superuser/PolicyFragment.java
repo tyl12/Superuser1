@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser;
+package com.koushikdutta.superuser;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -38,12 +38,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.xiaomeng.superuser.db.LogEntry;
-import com.xiaomeng.superuser.db.SuDatabaseHelper;
-import com.xiaomeng.superuser.db.SuperuserDatabaseHelper;
-import com.xiaomeng.superuser.db.UidPolicy;
-import com.xiaomeng.widgets.ListContentFragment;
-import com.xiaomeng.widgets.ListItem;
+import com.koushikdutta.superuser.db.LogEntry;
+import com.koushikdutta.superuser.db.SuDatabaseHelper;
+import com.koushikdutta.superuser.db.SuperuserDatabaseHelper;
+import com.koushikdutta.superuser.db.UidPolicy;
+import com.koushikdutta.widgets.ListContentFragment;
+import com.koushikdutta.widgets.ListItem;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,7 +100,7 @@ public class PolicyFragment extends ListContentFragment {
 
         load();
 
-        if ("com.xiaomeng.superuser".equals(getContext().getPackageName())) {
+        if ("com.koushikdutta.superuser".equals(getContext().getPackageName())) {
             ImageView watermark = (ImageView) view.findViewById(R.id.watermark);
             if (watermark != null)
                 watermark.setImageResource(R.drawable.clockwork512);

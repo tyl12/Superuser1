@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser.db;
+package com.koushikdutta.superuser.db;
 
 import java.util.ArrayList;
 
@@ -25,7 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
-import com.xiaomeng.superuser.util.Settings;
+import com.koushikdutta.superuser.util.Settings;
 
 public class SuperuserDatabaseHelper extends SQLiteOpenHelper {
     private static final int CURRENT_VERSION = 1;

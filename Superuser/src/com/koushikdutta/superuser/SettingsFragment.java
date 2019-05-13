@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser;
+package com.koushikdutta.superuser;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -30,9 +30,9 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
-import com.xiaomeng.superuser.util.Settings;
-import com.xiaomeng.widgets.BetterListFragment;
-import com.xiaomeng.widgets.ListItem;
+import com.koushikdutta.superuser.util.Settings;
+import com.koushikdutta.widgets.BetterListFragment;
+import com.koushikdutta.widgets.ListItem;
 
 @SuppressLint("ValidFragment")
 public class SettingsFragment extends BetterListFragment {

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser.util;
+package com.koushikdutta.superuser;
 
-import android.graphics.drawable.Drawable;
+import com.koushikdutta.superuser.db.SuDatabaseHelper;
 
-public final class ImageCache extends SoftReferenceHashTable<String, Drawable> {
-    private static ImageCache mInstance = new ImageCache();
+import android.app.Application;
 
-    public static ImageCache getInstance() {
-        return mInstance;
-    }
+public class SuApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    private ImageCache() {
+        new SuDatabaseHelper(this).getWritableDatabase().close();
     }
 }

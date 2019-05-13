@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser.db;
+package com.koushikdutta.superuser.util;
 
-import java.util.Date;
+import android.graphics.drawable.Drawable;
 
-import com.xiaomeng.superuser.R;
+public final class ImageCache extends SoftReferenceHashTable<String, Drawable> {
+    private static ImageCache mInstance = new ImageCache();
 
-public class LogEntry extends UidCommand {
-    public long id;
-    public String action;
-    public int date;
-
-    public Date getDate() {
-        return new Date((long)date * 1000);
+    public static ImageCache getInstance() {
+        return mInstance;
     }
 
-    public int getActionResource() {
-        if (UidPolicy.ALLOW.equals(action))
-            return R.string.allow;
-        else if (UidPolicy.INTERACTIVE.equals(action))
-            return R.string.interactive;
-        return R.string.deny;
+    private ImageCache() {
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser;
+package com.koushikdutta.superuser;
 
 import java.util.ArrayList;
 
@@ -33,13 +33,13 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.xiaomeng.superuser.db.LogEntry;
-import com.xiaomeng.superuser.db.SuDatabaseHelper;
-import com.xiaomeng.superuser.db.SuperuserDatabaseHelper;
-import com.xiaomeng.superuser.db.UidPolicy;
-import com.xiaomeng.superuser.util.Settings;
-import com.xiaomeng.widgets.BetterListFragment;
-import com.xiaomeng.widgets.ListItem;
+import com.koushikdutta.superuser.db.LogEntry;
+import com.koushikdutta.superuser.db.SuDatabaseHelper;
+import com.koushikdutta.superuser.db.SuperuserDatabaseHelper;
+import com.koushikdutta.superuser.db.UidPolicy;
+import com.koushikdutta.superuser.util.Settings;
+import com.koushikdutta.widgets.BetterListFragment;
+import com.koushikdutta.widgets.ListItem;
 
 public class LogFragment extends BetterListFragment {
     UidPolicy up;

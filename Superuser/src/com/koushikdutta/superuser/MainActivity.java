@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.xiaomeng.superuser;
+package com.koushikdutta.superuser;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -31,10 +31,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
-import com.xiaomeng.superuser.util.Settings;
-import com.xiaomeng.superuser.util.StreamUtility;
-import com.xiaomeng.superuser.util.SuHelper;
-import com.xiaomeng.widgets.BetterListActivity;
+import com.koushikdutta.superuser.util.Settings;
+import com.koushikdutta.superuser.util.StreamUtility;
+import com.koushikdutta.superuser.util.SuHelper;
+import com.koushikdutta.widgets.BetterListActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
