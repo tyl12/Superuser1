@@ -1,4 +1,4 @@
-package com.koushikdutta.superuser.util;
+package com.xiaomeng.superuser.util;
 
 import android.content.Context;
 import android.util.Log;

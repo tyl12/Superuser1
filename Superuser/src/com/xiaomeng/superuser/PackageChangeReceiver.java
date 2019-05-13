@@ -1,4 +1,4 @@
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import java.util.ArrayList;
 
@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.koushikdutta.superuser.db.SuDatabaseHelper;
-import com.koushikdutta.superuser.db.UidPolicy;
+import com.xiaomeng.superuser.db.SuDatabaseHelper;
+import com.xiaomeng.superuser.db.UidPolicy;
 
 public class PackageChangeReceiver extends BroadcastReceiver {
     @Override

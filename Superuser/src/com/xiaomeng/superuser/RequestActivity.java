@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

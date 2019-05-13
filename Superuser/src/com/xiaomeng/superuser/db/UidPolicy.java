@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser.db;
+package com.xiaomeng.superuser.db;
 
 import java.util.Date;
 
-import com.koushikdutta.superuser.R;
+import com.xiaomeng.superuser.R;
 
 public class UidPolicy extends UidCommand {
     public static final String ALLOW = "allow";

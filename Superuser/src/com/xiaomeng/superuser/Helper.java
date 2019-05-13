@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import java.lang.reflect.Method;
 
@@ -25,7 +25,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.UserManager;
 
-import com.koushikdutta.superuser.util.ImageCache;
+import com.xiaomeng.superuser.util.ImageCache;
 
 public class Helper {
     public static Drawable loadPackageIcon(Context context, String pn) {

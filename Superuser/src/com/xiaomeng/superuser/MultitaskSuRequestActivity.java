@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -41,10 +41,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.koushikdutta.superuser.db.SuDatabaseHelper;
-import com.koushikdutta.superuser.db.UidPolicy;
-import com.koushikdutta.superuser.util.Settings;
-import com.koushikdutta.superuser.util.SuHelper;
+import com.xiaomeng.superuser.db.SuDatabaseHelper;
+import com.xiaomeng.superuser.db.UidPolicy;
+import com.xiaomeng.superuser.util.Settings;
+import com.xiaomeng.superuser.util.SuHelper;
 
 import junit.framework.Assert;
 
@@ -319,7 +319,7 @@ public class MultitaskSuRequestActivity extends Activity {
                         }
                     });
 
-                    if ("com.koushikdutta.superuser".equals(getPackageName())) {
+                    if ("com.xiaomeng.superuser".equals(getPackageName())) {
                         if (!SuHelper.CURRENT_VERSION.equals(payload.getAsString("binary.version")))
                             SuCheckerReceiver.doNotification(MultitaskSuRequestActivity.this);
                     }
