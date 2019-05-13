@@ -1,4 +1,4 @@
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 
-import com.koushikdutta.widgets.BetterListFragment;
-import com.koushikdutta.widgets.ListItem;
+import com.xiaomeng.widgets.BetterListFragment;
+import com.xiaomeng.widgets.ListItem;
 
 public class AboutFragment extends BetterListFragment {
     ContextThemeWrapper mWrapper;
@@ -44,7 +44,7 @@ public class AboutFragment extends BetterListFragment {
             public void onClick(View view) {
                 super.onClick(view);
                 Intent i = new Intent();
-                i.setData(Uri.parse("market://details?id=com.koushikdutta.superuser"));
+                i.setData(Uri.parse("market://details?id=com.xiaomeng.superuser"));
                 startActivity(i);
             }
         });
@@ -83,7 +83,7 @@ public class AboutFragment extends BetterListFragment {
             public void onClick(View view) {
                 super.onClick(view);
                 Intent i = new Intent();
-                i.setData(Uri.parse("market://details?id=com.koushikdutta.rommanager"));
+                i.setData(Uri.parse("market://details?id=com.xiaomeng.rommanager"));
                 startActivity(i);
             }
         });
@@ -92,7 +92,7 @@ public class AboutFragment extends BetterListFragment {
             public void onClick(View view) {
                 super.onClick(view);
                 Intent i = new Intent();
-                i.setData(Uri.parse("market://details?id=com.koushikdutta.backup"));
+                i.setData(Uri.parse("market://details?id=com.xiaomeng.backup"));
                 startActivity(i);
             }
         });
@@ -101,7 +101,7 @@ public class AboutFragment extends BetterListFragment {
             public void onClick(View view) {
                 super.onClick(view);
                 Intent i = new Intent();
-                i.setData(Uri.parse("market://details?id=com.koushikdutta.desktopsms"));
+                i.setData(Uri.parse("market://details?id=com.xiaomeng.desktopsms"));
                 startActivity(i);
             }
         });
@@ -110,7 +110,7 @@ public class AboutFragment extends BetterListFragment {
             public void onClick(View view) {
                 super.onClick(view);
                 Intent i = new Intent();
-                i.setData(Uri.parse("market://details?id=com.koushikdutta.tether"));
+                i.setData(Uri.parse("market://details?id=com.xiaomeng.tether"));
                 startActivity(i);
             }
         });

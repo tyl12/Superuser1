@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser.util;
+package com.xiaomeng.superuser.util;
 
 import java.lang.ref.SoftReference;
 import java.util.Hashtable;

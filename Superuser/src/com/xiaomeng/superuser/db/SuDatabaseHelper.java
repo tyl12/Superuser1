@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser.db;
+package com.xiaomeng.superuser.db;
 
 import java.util.ArrayList;
 

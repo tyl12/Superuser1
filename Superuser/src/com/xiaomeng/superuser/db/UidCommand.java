@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser.db;
+package com.xiaomeng.superuser.db;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

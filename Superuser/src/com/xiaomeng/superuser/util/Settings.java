@@ -1,4 +1,4 @@
-package com.koushikdutta.superuser.util;
+package com.xiaomeng.superuser.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -21,8 +21,8 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.koushikdutta.superuser.Helper;
-import com.koushikdutta.superuser.db.SuperuserDatabaseHelper;
+import com.xiaomeng.superuser.Helper;
+import com.xiaomeng.superuser.db.SuperuserDatabaseHelper;
 
 public class Settings {
     static final String TAG = "Superuser";

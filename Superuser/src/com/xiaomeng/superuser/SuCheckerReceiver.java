@@ -1,4 +1,4 @@
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 
-import com.koushikdutta.superuser.util.Settings;
-import com.koushikdutta.superuser.util.SuHelper;
+import com.xiaomeng.superuser.util.Settings;
+import com.xiaomeng.superuser.util.SuHelper;
 
 public class SuCheckerReceiver extends BroadcastReceiver {
     public static void doNotification(Context context) {

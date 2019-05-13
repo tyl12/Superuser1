@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.koushikdutta.superuser;
+package com.xiaomeng.superuser;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,10 +24,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.koushikdutta.superuser.db.LogEntry;
-import com.koushikdutta.superuser.db.SuperuserDatabaseHelper;
-import com.koushikdutta.superuser.db.UidPolicy;
-import com.koushikdutta.superuser.util.Settings;
+import com.xiaomeng.superuser.db.LogEntry;
+import com.xiaomeng.superuser.db.SuperuserDatabaseHelper;
+import com.xiaomeng.superuser.db.UidPolicy;
+import com.xiaomeng.superuser.util.Settings;
 
 public class SuReceiver extends BroadcastReceiver {
     @Override
