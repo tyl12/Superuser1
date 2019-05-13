@@ -16,7 +16,7 @@
      limitations under the License.
 -->
 <resources>
-  <string name="superuser">超级用户</string>
+  <string name="superuser">授权管理</string>
   <string name="allow">允许</string>
   <string name="deny">拒绝</string>
   <string name="status_incoming">收到超级用户请求\u2026</string>
